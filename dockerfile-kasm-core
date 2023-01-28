@@ -1,4 +1,4 @@
-ARG BASE_IMAGE="ubuntu:20.04"
+ARG BASE_IMAGE="ubuntu:22.04"
 FROM $BASE_IMAGE AS install_tools
 ARG DISTRO=ubuntu
 
@@ -7,8 +7,8 @@ LABEL "com.kasmweb.image"="true"
 LABEL "com.kasmweb.gpu_acceleration_egl"="nvidia"
 
 ### Environment config
-ARG START_XFCE4=0
-ARG START_PULSEAUDIO=0
+ARG START_XFCE4=1
+ARG START_PULSEAUDIO=1
 ARG BG_IMG=bg_kasm.png
 ARG EXTRA_SH=noop.sh
 ARG DISTRO=ubuntu
@@ -106,8 +106,8 @@ COPY ./src/ubuntu/install/gamepad $INST_SCRIPTS/gamepad/
 RUN bash $INST_SCRIPTS/gamepad/install_gamepad.sh && rm -rf $INST_SCRIPTS/gamepad/
 
 ### Install custom cursors
-COPY ./src/ubuntu/install/cursors $INST_SCRIPTS/cursors/
-RUN bash $INST_SCRIPTS/cursors/install_cursors.sh && rm -rf $INST_SCRIPTS/cursors/
+# COPY ./src/ubuntu/install/cursors $INST_SCRIPTS/cursors/
+# RUN bash $INST_SCRIPTS/cursors/install_cursors.sh && rm -rf $INST_SCRIPTS/cursors/
 
 ### Install Squid
 COPY ./src/ubuntu/install/squid/install/ $INST_SCRIPTS/squid_install/
@@ -144,6 +144,21 @@ RUN (groupadd -g 1000 kasm-user \
 ENV HOME /home/kasm-user
 WORKDIR $HOME
 RUN mkdir -p $HOME && chown -R 1000:0 $HOME
+
+### Add Sudo Access
+RUN apt-get update \
+    && apt-get install -y sudo \
+    && echo 'kasm-user ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers \
+    && rm -rf /var/lib/apt/list/*
+
+### Add Google Chrome
+RUN apt-get update \
+    && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O /tmp/google-chrome-stable_current_amd64.deb \
+    && gdebi --n /tmp/google-chrome-stable_current_amd64.deb \
+    && rm -rf /tmp/google-chrome-stable_current_amd64.deb \
+    && sed -i 's|Exec=/usr/bin/google-chrome-stable %U|Exec=/usr/bin/google-chrome-stable --no-sandbox %U|g' /usr/share/applications/google-chrome.desktop \
+    && sed -i 's|Exec=/usr/bin/google-chrome-stable|Exec=/usr/bin/google-chrome-stable --no-sandbox|g' /usr/share/applications/google-chrome.desktop \
+    && sed -i 's|Exec=/usr/bin/google-chrome-stable --incognito|Exec=/usr/bin/google-chrome-stable --incognito --no-sandbox|g' /usr/share/applications/google-chrome.desktop
 
 ### FIX PERMISSIONS ## Objective is to change the owner of non-home paths to root, remove write permissions, and set execute where required
 # these files are created on container first exec, by the default user, so we have to create them since default will not have write perm

@@ -92,8 +92,11 @@ else
     wget "${BUILD_URL}" -O kasmvncserver.deb
 
     apt-get update
-    apt-get install -y gettext ssl-cert libxfont2
-    apt-get install -y /tmp/kasmvncserver.deb
+    # apt-get install -y gettext ssl-cert libxfont2
+    # apt-get install -y /tmp/kasmvncserver.deb
+    # rm -f /tmp/kasmvncserver.deb
+    apt-get install -y gettext ssl-cert gdebi-core
+    gdebi --n  /tmp/kasmvncserver.deb
     rm -f /tmp/kasmvncserver.deb
 fi
 #mkdir $KASM_VNC_PATH/certs
