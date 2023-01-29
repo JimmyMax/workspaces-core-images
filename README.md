@@ -29,25 +29,17 @@ Kasm Workspaces was developed to meet the most demanding secure collaboration re
 # Live Demo
 A self-guided on-demand demo is available at [**kasmweb.com**](https://www.kasmweb.com/demo.html?utm_campaign=Github&utm_source=github)
 
+# Change
+Add Sudo access
+
+[**DockerHub Image**](https://hub.docker.com/repository/docker/jimmymax/kasm.root/general)
+jimmymax/kasm.root
+
+Ubuntu 22.04: dockerfile-kasm-core
+
+Ubuntu 20.04: dockerfile-kasm-core-20
 
 [logo]: https://cdn2.hubspot.net/hubfs/5856039/dockerhub/kasm_logo.png "Kasm Logo"
 [Kasm_Workflow]: https://cdn2.hubspot.net/hubfs/5856039/dockerhub/kasm_workflow_960.gif "Kasm Workflow"
 
-sed -i 's/\r$//' filename
-sed -i 's/\r$//' src/ubuntu/install/tools/install_tools.sh
-sed -i 's/\r$//' src/ubuntu/install/fonts/install_custom_fonts.sh
-sed -i 's/\r$//' src/ubuntu/install/xfce/install_xfce_ui.sh
-sed -i 's/\r$//' src/ubuntu/install/kasm_vnc/install_kasm_vnc.sh
-sed -i 's/\r$//' src/ubuntu/install/kasm_upload_server/install_kasm_upload_server.sh
-sed -i 's/\r$//' src/ubuntu/install/audio/install_audio.sh
-sed -i 's/\r$//' src/ubuntu/install/audio_input/install_audio_input.sh
-sed -i 's/\r$//' src/ubuntu/install/gamepad/install_gamepad.sh
-sed -i 's/\r$//' src/ubuntu/install/squid/install/install_squid.sh
-sed -i 's/\r$//' src/common/startup_scripts/set_user_permission.sh
-sed -i 's/\r$//' src/ubuntu/install/virtualgl/install_virtualgl.sh
-sudo docker build -t jimmymax/kasm.root:22.04 -f /audio_input/install_audio_input.shdockerfile-kasm-core .
 
-docker push jimmymax/kasm.root:20.04
-sudo docker run --rm  -it --shm-size=512m -p 6901:6901 -e VNC_PW=password --build-arg START_XFCE4=1 jimmymax/kasm.root:20.04
-sudo docker run --rm  -it -p 6901:6901 -e VNC_PW=password jimmymax/kasm.root:20.04
-docker ps -a | grep "dapr" | awk "{print $3}" | xargs docker rm
